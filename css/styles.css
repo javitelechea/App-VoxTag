@@ -205,10 +205,37 @@ body {
 .tag-btn-rival { border-left: 4px solid var(--danger); }
 .tag-btn.tag-flash { animation: tagFlash 0.5s; background: var(--accent); }
 
-@keyframes tagFlash {
+@keyframes tagFlash { 
     0% { transform: scale(1); background: var(--accent); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.05); background: white; color: black; }
     100% { transform: scale(1); }
+}
+
+@keyframes timerBlink {
+    0%, 100% { opacity: 1; color: var(--text-primary); }
+    50% { opacity: 0.3; color: var(--warning); }
+}
+
+.timer-blink {
+    animation: timerBlink 1.2s infinite;
+}
+
+/* ── Start Button ── */
+.tag-btn-sync {
+    flex: 0 0 45px !important; /* Ancho fijo pequeño, aprox mitad de un botón standard */
+    border-left: 4px solid var(--warning) !important;
+    min-width: 45px !important;
+    font-size: 0.65rem !important;
+    opacity: 0.9;
+}
+.tag-btn-sync:hover { border-color: var(--warning) !important; opacity: 1; }
+
+/* Mobile start button */
+@media (max-width: 850px) {
+    .tag-btn-sync {
+        flex: 0 0 40px !important;
+        min-width: 40px !important;
+    }
 }
 
 .hotkey-label { 
@@ -336,6 +363,12 @@ body {
 .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
 .btn-primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; }
 .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+.btn-warning { background: var(--warning); color: #000; }
+.btn-warning:hover { filter: brightness(1.1); transform: translateY(-1px); }
 .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
 .btn-outline:hover { background: var(--bg-tertiary); }
 .btn-ghost { background: transparent; color: var(--text-muted); padding: 4px; }

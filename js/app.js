@@ -56,23 +56,27 @@ document.addEventListener('DOMContentLoaded', () => {
         tagButtonsA.innerHTML = '';
         tagButtonsB.innerHTML = '';
         
-        const tags = VoxStore.getTagTypes();
+        const tagTypes = VoxStore.getTagTypes();
         const topKeys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
         const bottomKeys = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
         
-        let topIdx = 0, bottomIdx = 0;
+        let topIdx = 0;
+        let bottomIdx = 0;
 
-        tags.forEach(tag => {
+        tagTypes.forEach(tag => {
             const btn = document.createElement('button');
             const isRival = tag.row === 'bottom';
+            const isSync = tag.id === 'sync-start';
             let key = '';
             
-            if (!tagEditMode) {
+            if (!tagEditMode && !isSync) {
                 if (!isRival && topIdx < topKeys.length) key = topKeys[topIdx++];
                 else if (isRival && bottomIdx < bottomKeys.length) key = bottomKeys[bottomIdx++];
             }
 
-            btn.className = 'tag-btn' + (isRival ? ' tag-btn-rival' : '') + (editingTagId === tag.id ? ' active' : '');
+            // Start should NOT have tag-btn-rival class to avoid red border
+            const extraClass = isSync ? ' tag-btn-sync' : (isRival ? ' tag-btn-rival' : '');
+            btn.className = 'tag-btn' + extraClass + (editingTagId === tag.id ? ' active' : '');
             if (key) {
                 btn.innerHTML = `<span>${tag.label}</span> <span class="hotkey-label">${key}</span>`;
                 btn.dataset.hotkey = key.toLowerCase();
@@ -96,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            if (isRival) tagButtonsB.appendChild(btn);
+            if (isRival || isSync) tagButtonsB.appendChild(btn);
             else tagButtonsA.appendChild(btn);
         });
 
@@ -206,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         VoxStore.resetEvents();
         VoxTimer.stop();
         VoxTimer.reset(); 
-        timerText.textContent = '00:00:00';
+        timerText.textContent = '00:00';
         btnTimerToggle.textContent = 'Iniciar Partido';
         btnTimerToggle.classList.remove('active');
 
@@ -275,14 +279,26 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (VoxTimer.isRunning) {
             VoxTimer.stop();
-            btnTimerToggle.textContent = 'Iniciar Partido';
-            btnTimerToggle.classList.remove('active');
+            const display = getEl('live-timer-display');
+            if (display) display.classList.add('timer-blink');
+            
+            const hasStarted = VoxTimer.getTime() > 0;
+            btnTimerToggle.textContent = hasStarted ? 'Reanudar Partido' : 'Iniciar Partido';
+            btnTimerToggle.classList.remove('btn-danger', 'btn-warning');
+            btnTimerToggle.classList.add('btn-primary');
+            toast('Partido pausado');
         } else {
             VoxTimer.start();
+            const display = getEl('live-timer-display');
+            if (display) display.classList.remove('timer-blink');
+            
             btnTimerToggle.textContent = 'Pausar Partido';
-            btnTimerToggle.classList.add('active');
+            btnTimerToggle.classList.remove('btn-primary');
+            btnTimerToggle.classList.add('btn-warning');
+            toast('Partido iniciado');
         }
     };
+
 
     window.addEventListener('timer_tick', (e) => {
         timerText.textContent = VoxTimer.formatTime(e.detail);

@@ -3,17 +3,21 @@ const VoxStore = (() => {
     let listeners = {};
 
     let tagTypes = [
+        // Fila Propia (Top)
         { id: 'salida-propia', label: 'Salida', aliases: ['salida', 'inicio', 'salida propia'], pre_sec: 3, post_sec: 10, row: 'top' },
-        { id: 'salida-rival', label: 'Bloqueo', aliases: ['bloqueo', 'salida rival', 'salida en contra'], pre_sec: 3, post_sec: 10, row: 'bottom' },
         { id: 'ataque-propio', label: 'Ataque', aliases: ['ataque', 'ofensiva'], pre_sec: 3, post_sec: 10, row: 'top' },
-        { id: 'ataque-rival', label: 'Defensa', aliases: ['defensa', 'ataque rival'], pre_sec: 3, post_sec: 10, row: 'bottom' },
         { id: 'area-ataque', label: 'Area', aliases: ['attack area', 'ingreso al área', 'área'], pre_sec: 5, post_sec: 5, row: 'top' },
-        { id: 'area-defensa', label: 'Area EC', aliases: ['area en contra', 'área en contra', 'área rival'], pre_sec: 5, post_sec: 5, row: 'bottom' },
         { id: 'cc-ataque', label: 'CC', aliases: ['corto', 'corner corto', 'cc ataque', 'ataque corner', 'ccat', 'córner corto ataque'], pre_sec: 2, post_sec: 6, row: 'top' },
-        { id: 'cc-defensa', label: 'CC DEF', aliases: ['corto en contra', 'cc defensa', 'defensa corner', 'ccdef', 'córner corto defensa'], pre_sec: 2, post_sec: 6, row: 'bottom' },
         { id: 'contragolpe', label: 'Contragolpe', aliases: ['counter attack', 'contra', 'contragolpe propia'], pre_sec: 5, post_sec: 7, row: 'top' },
-        { id: 'contragolpe-contra', label: 'Contragolpe EC', aliases: ['contragolpe en contra', 'counter attack against', 'contra en contra', 'contragolpe rival', 'contra rival'], pre_sec: 5, post_sec: 7, row: 'bottom' },
         { id: 'gol-propio', label: 'Gol', aliases: ['goal', 'gol', 'gol propio'], pre_sec: 10, post_sec: 3, row: 'top' },
+
+        // Fila Rival (Bottom)
+        { id: 'sync-start', label: 'Start', aliases: ['sincro', 'inicio cuarto', 'sincronizar', 'sync'], pre_sec: 0, post_sec: 1, row: 'bottom' },
+        { id: 'salida-rival', label: 'Bloqueo', aliases: ['bloqueo', 'salida rival', 'salida en contra'], pre_sec: 3, post_sec: 10, row: 'bottom' },
+        { id: 'ataque-rival', label: 'Defensa', aliases: ['defensa', 'ataque rival'], pre_sec: 3, post_sec: 10, row: 'bottom' },
+        { id: 'area-defensa', label: 'Area EC', aliases: ['area en contra', 'área en contra', 'área rival'], pre_sec: 5, post_sec: 5, row: 'bottom' },
+        { id: 'cc-defensa', label: 'CC DEF', aliases: ['corto en contra', 'cc defensa', 'defensa corner', 'ccdef', 'córner corto defensa'], pre_sec: 2, post_sec: 6, row: 'bottom' },
+        { id: 'contragolpe-contra', label: 'Contragolpe EC', aliases: ['contragolpe en contra', 'counter attack against', 'contra en contra', 'contragolpe rival', 'contra rival'], pre_sec: 5, post_sec: 7, row: 'bottom' },
         { id: 'gol-rival', label: 'Gol EC', aliases: ['gol en contra', 'rival goal', 'gol rival'], pre_sec: 10, post_sec: 3, row: 'bottom' }
     ];
 
@@ -80,8 +84,8 @@ const VoxStore = (() => {
             id: Date.now(),
             label: tag.label,
             timestamp: time,
-            start_sec: Math.max(0, time - (tag.pre_sec || 5)),
-            end_sec: time + (tag.post_sec || 10),
+            start_sec: Math.max(0, time - (tag.pre_sec !== undefined ? tag.pre_sec : 5)),
+            end_sec: time + (tag.post_sec !== undefined ? tag.post_sec : 10),
             row: tag.row
         };
         events.unshift(evt);
