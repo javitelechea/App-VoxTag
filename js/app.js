@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Modal Mode Logic
-    const isMobile = window.innerWidth <= 850;
+    const isMobile = window.innerWidth <= 1024;
     if (isMobile) {
         const liveRadio = document.querySelector('input[name="project-mode"][value="live"]');
         if (liveRadio) liveRadio.checked = true;

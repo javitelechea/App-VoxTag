@@ -231,7 +231,7 @@ body {
 .tag-btn-sync:hover { border-color: var(--warning) !important; opacity: 1; }
 
 /* Mobile start button */
-@media (max-width: 850px) {
+@media (max-width: 1024px) {
     .tag-btn-sync {
         flex: 1 1 100% !important;
         min-width: 100% !important;
@@ -406,7 +406,7 @@ body {
 @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 /* ── Mobile Optimization (Breakpoints) ── */
-@media (max-width: 850px) {
+@media (max-width: 1024px) {
     #app-header {
         height: 50px;
         padding: 0 16px;
@@ -458,6 +458,12 @@ body {
         flex-shrink: 0;
     }
     
+    /* Tablet scaling for timer */
+    @media (min-width: 700px) {
+        #live-timer-display { font-size: 2.2rem !important; }
+        #btn-timer-toggle { padding: 8px 24px !important; font-size: 1rem !important; }
+    }
+    
     #btn-timer-toggle {
         padding: 6px 16px !important;
         font-size: 0.85rem !important;
@@ -475,6 +481,13 @@ body {
         padding: 10px 4px; 
         font-size: 0.72rem;
         min-width: 70px;
+    }
+
+    /* Tablet adjustment: use more columns on wider screens */
+    @media (min-width: 700px) {
+        .tag-btn {
+            flex: 1 1 18%;
+        }
     }
 
     #event-sidebar {
