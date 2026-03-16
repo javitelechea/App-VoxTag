@@ -380,7 +380,6 @@ body {
     
     #app-header .logo { font-size: 1.1rem; }
     .header-actions { display: flex !important; gap: 8px; } 
-    #btn-export { display: none !important; } /* Solo ocultamos exportar */
     #mode-video, #mode-live { display: none !important; } /* Ocultamos switcher de modo */
     
     .switcher { display: none !important; }
