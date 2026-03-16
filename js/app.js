@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return el;
     };
 
+    // Force TAGS update if old version (to fix Contragolpe EC aliases)
+    const TAGS_VER = '2026-03-16-v2';
+    if (localStorage.getItem('voxtag_tags_ver') !== TAGS_VER) {
+        localStorage.removeItem('voxtag_tags');
+        localStorage.setItem('voxtag_tags_ver', TAGS_VER);
+        console.log('VoxTag: Tags forced update to', TAGS_VER);
+    }
+
     const btnVideo = getEl('mode-video');
     const btnLive = getEl('mode-live');
     const playerWrap = getEl('player-container');
