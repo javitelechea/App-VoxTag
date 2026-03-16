@@ -415,7 +415,7 @@ body {
         border-bottom: 1px solid var(--border);
     }
     
-    #media-slot { display: none; }
+    #media-slot { display: block !important; } /* Fix: allow it to show children like the timer */
 
     #live-timer-display { 
         font-size: 1.6rem !important; 
