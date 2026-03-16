@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancel = getEl('btn-cancel-game');
     const inputTitle = getEl('input-game-title');
     const inputYT = getEl('input-youtube-id');
+    const btnExport = getEl('btn-export');
 
     const tagButtonsA = getEl('tag-buttons-a');
     const tagButtonsB = getEl('tag-buttons-b');
@@ -171,10 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
         eventCount.textContent = `${evts.length} eventos`;
         eventList.innerHTML = evts.map(e => `
             <div class="event-item ${e.row === 'bottom' ? 'event-item-rival' : ''}">
-                <div style="font-weight:800; color:var(--text-primary);">${e.label}</div>
-                <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">
-                    Time: ${Math.floor(e.timestamp)}s [${Math.floor(e.start_sec)} - ${Math.floor(e.end_sec)}]
+                <div class="event-item-content">
+                    <div style="font-weight:800; color:var(--text-primary); text-transform: uppercase; font-size: 0.85rem;">${e.label}</div>
+                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px; font-family: monospace;">
+                        T: ${Math.floor(e.timestamp)}s [${Math.floor(e.start_sec)}-${Math.floor(e.end_sec)}]
+                    </div>
                 </div>
+                <button class="btn-delete-event" onclick="VoxStore.deleteEvent(${e.id})" title="Eliminar">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
             </div>
         `).join('');
     });
@@ -236,6 +242,39 @@ document.addEventListener('DOMContentLoaded', () => {
         c.appendChild(t);
         setTimeout(() => t.remove(), 3000);
     }
+
+    // Export
+    btnExport.onclick = () => {
+        const events = VoxStore.getEvents();
+        if (events.length === 0) return toast('No hay eventos para exportar', 'error');
+
+        let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<file>\n  <ALL_INSTANCES>\n';
+        
+        // Sort events by timestamp (original events are unshifted, so we reverse them for chronological order in XML)
+        const sorted = [...events].sort((a, b) => a.timestamp - b.timestamp);
+
+        sorted.forEach((e, i) => {
+            xml += `    <instance>\n`;
+            xml += `      <ID>${i + 1}</ID>\n`;
+            xml += `      <start>${e.start_sec.toFixed(2)}</start>\n`;
+            xml += `      <end>${e.end_sec.toFixed(2)}</end>\n`;
+            xml += `      <code>${e.label}</code>\n`;
+            xml += `    </instance>\n`;
+        });
+
+        xml += '  </ALL_INSTANCES>\n</file>';
+
+        const blob = new Blob([xml], { type: 'text/xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `VoxTag_Export_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.xml`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast('XML exportado con éxito');
+    };
 
     // Voice Controls
     btnVoiceConstant.onclick = () => {

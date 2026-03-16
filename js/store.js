@@ -72,6 +72,11 @@ const VoxStore = (() => {
         emit('eventsUpdated', events);
     }
 
+    function deleteEvent(id) {
+        events = events.filter(e => e.id !== id);
+        emit('eventsUpdated', events);
+    }
+
     function matchVoiceToTag(transcript) {
         const t = transcript.toLowerCase();
         let best = null;
@@ -91,7 +96,7 @@ const VoxStore = (() => {
         return best;
     }
 
-    return { on, getTagTypes, getEvents, addEvent, matchVoiceToTag, addTagType, updateTagType, deleteTagType };
+    return { on, getTagTypes, getEvents, addEvent, deleteEvent, matchVoiceToTag, addTagType, updateTagType, deleteTagType };
 })();
 
 window.VoxStore = VoxStore;
