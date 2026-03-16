@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="event-item-content">
                     <div style="font-weight:800; color:var(--text-primary); text-transform: uppercase; font-size: 0.85rem;">${e.label}</div>
                     <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px; font-family: monospace;">
-                        T: ${Math.floor(e.timestamp)}s [${Math.floor(e.start_sec)}-${Math.floor(e.end_sec)}]
+                        T: ${VoxTimer.formatTime(e.timestamp)} [${VoxTimer.formatTime(e.start_sec)} - ${VoxTimer.formatTime(e.end_sec)}]
                     </div>
                 </div>
                 <button class="btn-delete-event" onclick="VoxStore.deleteEvent(${e.id})" title="Eliminar">
