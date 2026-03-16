@@ -6,10 +6,10 @@ const VoxVoice = (() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let isContinuous = false;
-    let isPTT = false;
     let isActive = false;
-    let isListening = false; // Internal flag for processing results
+    let isListening = false;
     let persistentStream = null;
+    let currentSessionId = 0;
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -18,13 +18,13 @@ const VoxVoice = (() => {
         recognition.continuous = true;
         
         recognition.onresult = (event) => {
-            // Only process if we are in continuous mode OR if we are specifically "listening" for a PTT command
-            if (!isActive || (!isContinuous && !isListening)) return;
+            if (!isActive || !isListening) return;
 
             const result = event.results[event.results.length - 1];
             const transcript = result[0].transcript;
             
             if (result.isFinal) {
+                console.log('VoxVoice: Command detected:', transcript.trim());
                 window.dispatchEvent(new CustomEvent('vox_command', { detail: transcript.trim() }));
             } else {
                 window.dispatchEvent(new CustomEvent('vox_interim', { detail: transcript.trim() }));
@@ -32,14 +32,14 @@ const VoxVoice = (() => {
         };
 
         recognition.onend = () => {
-            if (isActive) {
-                // Keep it alive as long as VoxVoice is "on"
+            // Only restart if we are in continuous mode and still active
+            if (isActive && isContinuous) {
                 setTimeout(() => {
-                    if (isActive) {
+                    if (isActive && isContinuous) {
                         try { recognition.start(); } catch(e) {}
                     }
                 }, 100);
-            } else {
+            } else if (!isActive) {
                 window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'inactive' }));
             }
         };
@@ -47,6 +47,7 @@ const VoxVoice = (() => {
         recognition.onerror = (event) => {
             if (event.error !== 'no-speech') {
                 console.error('VoxVoice error:', event.error);
+                if (event.error === 'aborted') isActive = false;
             }
         };
     }
@@ -54,10 +55,8 @@ const VoxVoice = (() => {
     async function primePermission() {
         if (persistentStream) return;
         try {
-            // Keeping the stream alive prevents Chrome from revoking the "active" permission state
-            // especially when starting/stopping SpeechRecognition frequently (PTT)
             persistentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            console.log('Mic permission primed and kept alive');
+            console.log('Mic permission primed');
         } catch (e) {
             console.warn('Mic prime failed', e);
         }
@@ -66,40 +65,50 @@ const VoxVoice = (() => {
     function start() {
         if (!recognition || isActive) return;
         isActive = true;
+        isListening = true; 
         try {
             recognition.start();
+            window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'active' }));
         } catch(e) {
             isActive = false;
         }
-        window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'active' }));
     }
 
     function stop() {
         if (!recognition || !isActive) return;
         isActive = false;
+        isListening = false;
         recognition.stop();
         window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'inactive' }));
     }
 
     function setMode(continuous) {
         isContinuous = continuous;
-        // If we are switching, we might want to reset the listening state
     }
 
-    // PTT Specific: Start/Stop listening without stopping the engine
+    // PTT Specific
     function startListening() {
+        if (isContinuous) return;
+        // Reset everything to ensure we don't have old audio
+        isActive = true;
         isListening = true;
-        window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'active' }));
+        try {
+            recognition.start();
+            window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'active' }));
+        } catch(e) {
+            console.error('PTT Start failed', e);
+        }
     }
 
     function stopListening() {
-        // Delay setting isListening to false to allow the final SpeechRecognition result to arrive
+        if (isContinuous) return;
+        // Stop the engine IMMEDIATELY to stop recording/buffering
         setTimeout(() => {
+            isActive = false;
             isListening = false;
-            if (!isContinuous) {
-                window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'inactive' }));
-            }
-        }, 800); // 800ms window for final result
+            recognition.stop();
+            window.dispatchEvent(new CustomEvent('vox_state_change', { detail: 'inactive' }));
+        }, 300); // Short grace period for final processing
     }
 
     return {
