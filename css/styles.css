@@ -379,13 +379,17 @@ body {
     }
     
     #app-header .logo { font-size: 1.1rem; }
-    .header-actions { display: none; } /* Ocultar botones header en mobile */
+    .header-actions { display: flex !important; gap: 8px; } 
+    #btn-export { display: none !important; } /* Solo ocultamos exportar */
+    #mode-video, #mode-live { display: none !important; } /* Ocultamos switcher de modo */
     
     .switcher { display: none !important; }
     #player-container { display: none !important; }
     
     #live-display { 
         display: flex !important; 
+        visibility: visible !important;
+        opacity: 1 !important;
         flex-direction: row !important; /* Timer y Botón lado a lado */
         height: auto !important;
         gap: 15px !important;
