@@ -191,9 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     btnSave.onclick = () => {
         const url = inputYT.value.trim();
-        if (!url) return toast('Falta link', 'error');
-        const id = url.split('v=')[1]?.split('&')[0] || url.split('youtu.be/')[1]?.split('?')[0] || url;
+        const modeSelected = document.querySelector('input[name="project-mode"]:checked').value;
         
+        if (modeSelected === 'video' && !url) return toast('Falta link de YouTube', 'error');
+
         // Clear project data for new game
         VoxStore.resetEvents();
         VoxTimer.stop();
@@ -202,12 +203,35 @@ document.addEventListener('DOMContentLoaded', () => {
         btnTimerToggle.textContent = 'Iniciar Partido';
         btnTimerToggle.classList.remove('active');
 
-        YTPlayer.loadVideo(id);
+        // Set system mode
+        currentMode = modeSelected;
+        if (currentMode === 'video') {
+            const id = url.split('v=')[1]?.split('&')[0] || url.split('youtu.be/')[1]?.split('?')[0] || url;
+            YTPlayer.loadVideo(id);
+            playerWrap.style.display = 'flex';
+            liveWrap.style.display = 'none';
+        } else {
+            playerWrap.style.display = 'none';
+            liveWrap.style.display = 'flex';
+        }
+
+        // Lock mode switcher (just hide it as instructed to prevent change)
+        document.querySelector('.switcher').style.display = 'none';
+
         modalNew.style.display = 'none';
         modalNew.classList.add('hidden');
         if (noGameOverlay) noGameOverlay.style.display = 'none';
-        toast('Nuevo proyecto iniciado');
+        toast(`Proyecto ${currentMode === 'video' ? 'Video' : 'Live'} iniciado`);
     };
+
+    // Modal Mode Logic
+    document.querySelectorAll('input[name="project-mode"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const ytGroup = getEl('yt-input-group');
+            if (e.target.value === 'live') ytGroup.style.display = 'none';
+            else ytGroup.style.display = 'block';
+        });
+    });
 
     // Modes
     btnVideo.onclick = () => {
