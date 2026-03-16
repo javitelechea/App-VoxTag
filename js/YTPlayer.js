@@ -15,5 +15,8 @@ const YTPlayer = (() => {
     function getCurrentTime() { return _ready ? _vp.getCurrentTime() : 0; }
     function seekTo(s) { if (_ready) _vp.seekTo(s); }
 
-    return { init, loadVideo, play, pause, togglePlay, getCurrentTime, seekTo };
+    return { 
+        init, loadVideo, play, pause, togglePlay, getCurrentTime, seekTo,
+        get isPlaying() { return _vp ? _vp.isPlaying : false; }
+    };
 })();

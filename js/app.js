@@ -262,6 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Timer
     btnTimerToggle.onclick = () => {
+        if (noGameOverlay && noGameOverlay.style.display !== 'none') {
+            return toast('Primero crea un proyecto', 'error');
+        }
+        
         if (VoxTimer.isRunning) {
             VoxTimer.stop();
             btnTimerToggle.textContent = 'Iniciar Partido';
@@ -343,6 +347,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('vox_command', (e) => {
+        // Guard: Only process if "time is running"
+        const isRunning = (currentMode === 'video') ? YTPlayer.isPlaying : VoxTimer.isRunning;
+        if (!isRunning) {
+            console.log('VoxCommand ignored: time not running');
+            return;
+        }
+
         const text = e.detail;
         recognizedOutput.textContent = text;
         const tagId = VoxStore.matchVoiceToTag(text);
