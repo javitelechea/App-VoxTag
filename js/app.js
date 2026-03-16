@@ -225,11 +225,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Modal Mode Logic
+    const isMobile = window.innerWidth <= 850;
+    if (isMobile) {
+        const liveRadio = document.querySelector('input[name="project-mode"][value="live"]');
+        if (liveRadio) liveRadio.checked = true;
+        const ytGroup = getEl('yt-input-group');
+        if (ytGroup) ytGroup.style.display = 'none';
+    }
+
     document.querySelectorAll('input[name="project-mode"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
             const ytGroup = getEl('yt-input-group');
-            if (e.target.value === 'live') ytGroup.style.display = 'none';
-            else ytGroup.style.display = 'block';
+            if (ytGroup) {
+                if (e.target.value === 'live') ytGroup.style.display = 'none';
+                else ytGroup.style.display = 'block';
+            }
         });
     });
 
