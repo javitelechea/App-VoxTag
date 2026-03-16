@@ -45,7 +45,23 @@ const VoxStore = (() => {
         }
     }
 
+    function saveEvents() {
+        localStorage.setItem('voxtag_events', JSON.stringify(events));
+        emit('eventsUpdated', events);
+    }
+
+    function loadEvents() {
+        const saved = localStorage.getItem('voxtag_events');
+        if (saved) {
+            try { 
+                events = JSON.parse(saved);
+                emit('eventsUpdated', events);
+            } catch(e) { console.error('VoxStore: Error loading events', e); }
+        }
+    }
+
     loadTags();
+    loadEvents();
 
     function getTagTypes() { return tagTypes; }
     function addTagType(t) { tagTypes.push(t); saveTags(); }
@@ -69,12 +85,17 @@ const VoxStore = (() => {
             row: tag.row
         };
         events.unshift(evt);
-        emit('eventsUpdated', events);
+        saveEvents();
     }
 
     function deleteEvent(id) {
         events = events.filter(e => e.id !== id);
-        emit('eventsUpdated', events);
+        saveEvents();
+    }
+
+    function resetEvents() {
+        events = [];
+        saveEvents();
     }
 
     function matchVoiceToTag(transcript) {
@@ -96,7 +117,7 @@ const VoxStore = (() => {
         return best;
     }
 
-    return { on, getTagTypes, getEvents, addEvent, deleteEvent, matchVoiceToTag, addTagType, updateTagType, deleteTagType };
+    return { on, getTagTypes, getEvents, addEvent, deleteEvent, resetEvents, matchVoiceToTag, addTagType, updateTagType, deleteTagType };
 })();
 
 window.VoxStore = VoxStore;

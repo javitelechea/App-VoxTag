@@ -193,11 +193,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = inputYT.value.trim();
         if (!url) return toast('Falta link', 'error');
         const id = url.split('v=')[1]?.split('&')[0] || url.split('youtu.be/')[1]?.split('?')[0] || url;
+        
+        // Clear project data for new game
+        VoxStore.resetEvents();
+        VoxTimer.stop();
+        VoxTimer.reset(); 
+        timerText.textContent = '00:00:00';
+        btnTimerToggle.textContent = 'Iniciar Partido';
+        btnTimerToggle.classList.remove('active');
+
         YTPlayer.loadVideo(id);
         modalNew.style.display = 'none';
         modalNew.classList.add('hidden');
         if (noGameOverlay) noGameOverlay.style.display = 'none';
-        toast('Video cargado');
+        toast('Nuevo proyecto iniciado');
     };
 
     // Modes
@@ -248,31 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const events = VoxStore.getEvents();
         if (events.length === 0) return toast('No hay eventos para exportar', 'error');
 
-        let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<file>\n  <ALL_INSTANCES>\n';
-        
-        // Sort events by timestamp (original events are unshifted, so we reverse them for chronological order in XML)
-        const sorted = [...events].sort((a, b) => a.timestamp - b.timestamp);
-
-        sorted.forEach((e, i) => {
-            xml += `    <instance>\n`;
-            xml += `      <ID>${i + 1}</ID>\n`;
-            xml += `      <start>${e.start_sec.toFixed(2)}</start>\n`;
-            xml += `      <end>${e.end_sec.toFixed(2)}</end>\n`;
-            xml += `      <code>${e.label}</code>\n`;
-            xml += `    </instance>\n`;
-        });
-
-        xml += '  </ALL_INSTANCES>\n</file>';
-
-        const blob = new Blob([xml], { type: 'text/xml' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `VoxTag_Export_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.xml`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        const xml = VoxExport.generateXML(events);
+        const filename = `VoxTag_Export_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.xml`;
+        VoxExport.download(xml, filename);
         toast('XML exportado con éxito');
     };
 
