@@ -11,8 +11,8 @@ const VoxStore = (() => {
         { id: 'area-defensa', label: 'Area EC', aliases: ['area en contra', 'área en contra', 'área rival'], pre_sec: 5, post_sec: 5, row: 'bottom' },
         { id: 'cc-ataque', label: 'CC', aliases: ['corto', 'corner corto', 'cc ataque', 'ataque corner', 'ccat', 'córner corto ataque'], pre_sec: 2, post_sec: 6, row: 'top' },
         { id: 'cc-defensa', label: 'CC DEF', aliases: ['corto en contra', 'cc defensa', 'defensa corner', 'ccdef', 'córner corto defensa'], pre_sec: 2, post_sec: 6, row: 'bottom' },
-        { id: 'contragolpe', label: 'Contragolpe', aliases: ['counter attack', 'contra'], pre_sec: 5, post_sec: 7, row: 'top' },
-        { id: 'contragolpe-contra', label: 'Contragolpe EC', aliases: ['contragolpe en contra', 'counter attack against', 'contra en contra'], pre_sec: 5, post_sec: 7, row: 'bottom' },
+        { id: 'contragolpe', label: 'Contragolpe', aliases: ['counter attack', 'contra', 'contragolpe propia'], pre_sec: 5, post_sec: 7, row: 'top' },
+        { id: 'contragolpe-contra', label: 'Contragolpe EC', aliases: ['contragolpe en contra', 'counter attack against', 'contra en contra', 'contragolpe rival', 'contra rival'], pre_sec: 5, post_sec: 7, row: 'bottom' },
         { id: 'gol-propio', label: 'Gol', aliases: ['goal', 'gol', 'gol propio'], pre_sec: 10, post_sec: 3, row: 'top' },
         { id: 'gol-rival', label: 'Gol EC', aliases: ['gol en contra', 'rival goal', 'gol rival'], pre_sec: 10, post_sec: 3, row: 'bottom' }
     ];

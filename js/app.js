@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const editPre = getEl('edit-tag-pre');
     const editPost = getEl('edit-tag-post');
     const editRow = getEl('edit-tag-row');
+    const editAliases = getEl('edit-tag-aliases');
     const btnToggleEditor = getEl('btn-toggle-tag-editor');
 
     const btnTimerToggle = getEl('btn-timer-toggle');
@@ -116,12 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
             editPre.value = tag.pre_sec;
             editPost.value = tag.post_sec;
             editRow.value = tag.row;
+            editAliases.value = (tag.aliases || []).join(', ');
             getEl('btn-delete-tag').style.display = 'inline-block';
         } else {
             editLabel.value = '';
             editPre.value = 5;
             editPost.value = 10;
             editRow.value = 'top';
+            editAliases.value = '';
             getEl('btn-delete-tag').style.display = 'none';
         }
         renderTagButtons();
@@ -141,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pre_sec: parseInt(editPre.value) || 0,
             post_sec: parseInt(editPost.value) || 0,
             row: editRow.value,
-            aliases: []
+            aliases: editAliases.value.split(',').map(a => a.trim()).filter(a => a)
         };
         if (!data.label) return toast('Ingresá un nombre', 'error');
 
