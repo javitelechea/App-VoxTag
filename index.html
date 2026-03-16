@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoxTag — Voice Event Coding</title>
+    <!-- Version busting -->
+    <link rel="stylesheet" href="css/styles.css?v=1773">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body id="voxtag-app">
+    <header id="app-header">
+        <div class="logo">VOXTAG</div>
+        <div class="switcher">
+            <button id="mode-video" class="active">Video</button>
+            <button id="mode-live">Live</button>
+        </div>
+        <div class="header-actions">
+            <button id="btn-new-game" class="btn btn-sm btn-primary">+ Nuevo Proyecto</button>
+            <button id="btn-export" class="btn btn-sm btn-outline">Exportar XML</button>
+        </div>
+    </header>
+
+    <main id="main-container">
+        <section id="interaction-area">
+            <div id="media-slot">
+                <div id="player-container">
+                    <div id="video-player-container"></div>
+                    <div id="no-game-overlay" class="player-overlay">
+                        <div class="overlay-content">
+                            <h3>Sin video cargado</h3>
+                            <p>Creá un proyecto nuevo arriba para empezar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="live-display" style="display: none;">
+                    <div id="live-timer-display">00:00</div>
+                    <button id="btn-timer-toggle" class="btn btn-primary" style="padding: 16px 40px; font-size: 1.2rem;">Iniciar Partido</button>
+                </div>
+            </div>
+
+            <div id="tag-bar" class="tag-bar">
+                <div class="tag-bar-header" style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: flex-start;">
+                    <div class="tag-rows-wrap" style="flex: 1;">
+                        <div class="tag-team-row" id="tag-buttons-a"></div>
+                        <div class="tag-team-row" id="tag-buttons-b"></div>
+                    </div>
+                    <button id="btn-toggle-tag-editor" class="btn btn-ghost" style="font-size: 1.2rem;">✏️</button>
+                </div>
+
+                <!-- Tag editor (inline) -->
+                <div id="tag-editor-inline" class="tag-editor-inline" style="display: none;">
+                    <div class="tag-editor-inline-row">
+                        <input id="edit-tag-label" type="text" placeholder="Nombre" />
+                        <input id="edit-tag-pre" type="number" class="tag-edit-num" placeholder="Pre" min="0" />
+                        <input id="edit-tag-post" type="number" class="tag-edit-num" placeholder="Post" min="0" />
+                        <select id="edit-tag-row">
+                            <option value="top">Propio (Arriba)</option>
+                            <option value="bottom">Rival (Abajo)</option>
+                        </select>
+                        <button id="btn-save-tag" class="btn btn-primary btn-sm">Guardar</button>
+                        <button id="btn-delete-tag" class="btn btn-outline btn-sm" style="color: var(--danger);">🗑️</button>
+                        <button id="btn-cancel-tag-edit" class="btn btn-ghost btn-sm">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <section id="event-sidebar">
+            <div class="sidebar-header">
+                <h3>Eventos</h3>
+                <span id="event-count" class="badge">0 eventos</span>
+            </div>
+            <div id="event-list"></div>
+
+            <div id="voice-controls">
+                <div class="voice-status-bar">
+                    <div id="voice-indicator" class="indicator"></div>
+                    <div id="recognized-output" class="recognized-text">Esperando voz...</div>
+                </div>
+                <div class="voice-buttons">
+                    <button id="btn-voice-constant" class="btn-voice btn-constant" title="Continuous Mode">Continuous</button>
+                    <button id="btn-voice-ptt" class="btn-voice btn-ptt" title="Push-to-Talk">PTT</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-new-game" class="modal hidden" style="display: none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box">
+            <h2>Nuevo Proyecto</h2>
+            <div class="form-group">
+                <label>Título del Partido</label>
+                <input id="input-game-title" type="text" placeholder="Ej: Final de Copa">
+            </div>
+            <div class="form-group">
+                <label>YouTube Link o ID</label>
+                <input id="input-youtube-id" type="text" placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+            <div class="modal-actions">
+                <button id="btn-cancel-game" class="btn btn-outline">Cancelar</button>
+                <button id="btn-save-game" class="btn btn-primary">Crear Proyecto</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/VideoPlayer.js?v=1773"></script>
+    <script src="js/YTPlayer.js?v=1773"></script>
+    <script src="js/store.js?v=1773"></script>
+    <script src="js/timer.js?v=1773"></script>
+    <script src="js/voice.js?v=1773"></script>
+    <script src="js/export.js?v=1773"></script>
+    <script src="js/app.js?v=1773"></script>
+</body>
+</html>
