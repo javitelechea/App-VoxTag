@@ -83,6 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tagEditMode) {
                     openTagEditor(tag);
                 } else {
+                    const isRunning = (currentMode === 'video') ? YTPlayer.isPlaying : VoxTimer.isRunning;
+                    if (!isRunning) {
+                        return toast('El tiempo no está corriendo', 'error');
+                    }
                     const time = (currentMode === 'video') ? YTPlayer.getCurrentTime() : VoxTimer.getTime();
                     VoxStore.addEvent(tag.id, time);
                     btn.classList.add('tag-flash');
@@ -350,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Guard: Only process if "time is running"
         const isRunning = (currentMode === 'video') ? YTPlayer.isPlaying : VoxTimer.isRunning;
         if (!isRunning) {
-            console.log('VoxCommand ignored: time not running');
+            toast('Tiempo pausado: comando ignorado', 'error');
             return;
         }
 
